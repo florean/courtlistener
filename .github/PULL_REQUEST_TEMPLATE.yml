@@ -1,0 +1,20 @@
+name: Bug Report
+description: File a bug report
+body:
+  - type: checkboxes
+    id: deployment
+    attributes:
+      label: "This PR should:"
+      options:
+        - label: "`skip-deploy`"
+          required: false
+        - label: "`skip-web-deploy`"
+          required: false
+        - label: "`skip-celery-deploy`"
+          required: false
+        - label: "`skip-cronjob-deploy`"
+          required: false
+        - label: "`skip-daemon-deploy`"
+          required: false
+    validations:
+      required: false

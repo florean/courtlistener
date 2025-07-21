@@ -1,0 +1,35 @@
+name: PR labeler
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  label-component:
+    runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      pull_request: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PR form
+        uses: stefanbuck/github-issue-parser@v3
+        id: pr-parser
+        with:
+          template-path: .github/PULL_REQUEST_TEMPLATE.yml
+        continue-on-error: true
+      - name: Set labels fields
+        uses: redhat-plumbers-in-action/advanced-issue-labeler@v3
+        with:
+          issue-form: ${{ steps.pr-parser.outputs.jsonString }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-path: .github/advanced-issue-labeler.yml
+        continue-on-error: true
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr edit $PR_URL --add-label "triage"
+        continue-on-error: true
